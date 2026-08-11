@@ -393,13 +393,17 @@ p{ margin:0 0 1em; }
 /* ---------- Booking ---------- */
 .booking{ background:var(--brand); color:#fff; }
 .booking__inner{ display:grid; grid-template-columns:1fr 1fr; gap:clamp(2rem,5vw,4.5rem); align-items:center; }
+/* A grid `1fr` track is minmax(auto,1fr), so it refuses to shrink below its
+   content's min-content width. The email address below has no break
+   opportunity, which otherwise forces both columns wider than the screen. */
+.booking__inner > *{ min-width:0; }
 .booking h2{ color:#fff; }
 .booking__copy p{ color:rgba(255,255,255,.78); max-width:42ch; }
 .booking__contact{ margin-top:2rem; display:grid; gap:.9rem; }
 .booking__contact li{ display:flex; gap:1rem; align-items:baseline; border-bottom:1px solid rgba(255,255,255,.16); padding-bottom:.9rem; }
 .booking__contact span{ font-size:.7rem; letter-spacing:.2em; text-transform:uppercase; color:var(--gold-soft); width:112px; flex:none; }
 .booking__contact span i{ width:1.1em; text-align:center; margin-right:.3rem; font-size:.85rem; }
-.booking__contact a{ font-size:1.05rem; border-bottom:1px solid transparent; transition:border-color .25s; }
+.booking__contact a{ font-size:1.05rem; border-bottom:1px solid transparent; transition:border-color .25s; overflow-wrap:anywhere; }
 .booking__contact a:hover{ border-color:var(--gold-soft); }
 
 .booking__form{
@@ -516,6 +520,9 @@ p{ margin:0 0 1em; }
   .hero__stats strong{ font-size:1.6rem; }
   .field-row{ grid-template-columns:1fr; }
   .booking__form{ padding:1.6rem; }
+  /* Label beside value leaves too little room for the email — stack them */
+  .booking__contact li{ flex-direction:column; align-items:flex-start; gap:.25rem; }
+  .booking__contact span{ width:auto; }
   .hero__art{ height:330px; }
   .frame__tag{ font-size:.55rem; letter-spacing:.1em; padding:.32rem .55rem; }
   .badge-circle{ width:92px; height:92px; }
