@@ -27,7 +27,15 @@
 
 *,*::before,*::after{ box-sizing:border-box; }
 
-html{ scroll-behavior:smooth; scroll-padding-top:96px; }
+html{
+  scroll-behavior:smooth; scroll-padding-top:96px;
+  /* The closed mobile nav drawer is parked off-screen right (translateX(100%)),
+     which widens the document by its 340px. Chrome clips that via body alone,
+     but iOS Safari does not — it needs the rule on html too.
+     `clip` rather than `hidden`: it clips without creating a scroll container,
+     so the sticky header keeps working and iOS cannot rubber-band sideways. */
+  overflow-x:clip;
+}
 
 body{
   margin:0;
@@ -38,7 +46,8 @@ body{
   color:var(--ink);
   background:var(--cream);
   -webkit-font-smoothing:antialiased;
-  overflow-x:hidden;
+  overflow-x:hidden;  /* fallback for browsers without `clip` (iOS < 16) */
+  overflow-x:clip;
 }
 
 img{ max-width:100%; display:block; }
