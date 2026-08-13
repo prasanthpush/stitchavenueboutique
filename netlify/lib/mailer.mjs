@@ -72,6 +72,20 @@ const stamp = () =>
   }).format(new Date());
 
 /**
+ * Short timestamp for the subject line.
+ *
+ * Gmail threads messages by subject, so two enquiries from the same customer
+ * would otherwise collapse into one conversation and the newer one could be
+ * missed. Including the minute makes every subject unique, which keeps each
+ * enquiry in its own thread.
+ */
+const subjectStamp = () =>
+  new Intl.DateTimeFormat('en-GB', {
+    timeZone: config.business.timezone,
+    day: '2-digit', month: 'short', hour: '2-digit', minute: '2-digit', hour12: true,
+  }).format(new Date()).replace(/,/g, '');
+
+/**
  * @param  {Record<string,string>} d Validated, normalised form data
  * @return {Promise<{notified: boolean, acknowledged: boolean}>}
  * @throws when the boutique notification cannot be sent
@@ -105,7 +119,9 @@ async function sendNotification(d, meta) {
   const message = {
     from: { name: config.from.name, address: config.from.email },
     to: config.to,
-    subject: headerSafe(`New fitting request — ${displayName(d.name)} (${d.serviceLabel})`),
+    subject: headerSafe(
+      `New fitting request — ${displayName(d.name)} · ${d.serviceLabel} · ${subjectStamp()}`,
+    ),
     html: notificationHtml(rows, d.notes ?? '', meta),
     text: notificationText(rows, d.notes ?? '', meta),
   };

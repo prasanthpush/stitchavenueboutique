@@ -79,10 +79,14 @@ final class Mailer
             }
         }
 
+        // The timestamp keeps every enquiry in its own Gmail thread — without it
+        // two requests from the same customer collapse into one conversation
+        // and the newer one is easy to miss.
         $mail->Subject = self::headerSafe(sprintf(
-            'New fitting request — %s (%s)',
+            'New fitting request — %s · %s · %s',
             self::displayName($d['name']),
-            $d['service_label']
+            $d['service_label'],
+            date('d M h:i A')
         ));
 
         $rows = [

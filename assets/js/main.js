@@ -5,19 +5,25 @@
   /* ---- Mobile navigation ---- */
   var burger = document.getElementById('burger');
   var nav = document.getElementById('nav');
+  var scrim = document.getElementById('navScrim');
 
-  function closeNav() {
-    nav.classList.remove('is-open');
-    burger.setAttribute('aria-expanded', 'false');
-    document.body.classList.remove('nav-open');
-  }
-
-  burger.addEventListener('click', function () {
-    var open = nav.classList.toggle('is-open');
+  /* One place that owns the open/closed state, so the burger, the scrim, the
+     links and Escape can never disagree about it. */
+  function setNav(open) {
+    nav.classList.toggle('is-open', open);
+    if (scrim) scrim.classList.toggle('is-shown', open);
     burger.setAttribute('aria-expanded', String(open));
     burger.setAttribute('aria-label', open ? 'Close menu' : 'Open menu');
     document.body.classList.toggle('nav-open', open);
+  }
+
+  function closeNav() { setNav(false); }
+
+  burger.addEventListener('click', function () {
+    setNav(!nav.classList.contains('is-open'));
   });
+
+  if (scrim) scrim.addEventListener('click', closeNav);
 
   nav.addEventListener('click', function (e) {
     if (e.target.closest('a')) closeNav();
@@ -25,6 +31,12 @@
 
   document.addEventListener('keydown', function (e) {
     if (e.key === 'Escape') closeNav();
+  });
+
+  // Rotating to landscape can cross the breakpoint with the drawer still open,
+  // which would leave the desktop nav stuck in its open state.
+  window.addEventListener('resize', function () {
+    if (window.innerWidth > 820 && nav.classList.contains('is-open')) closeNav();
   });
 
   /* ---- Header shadow once scrolled ---- */

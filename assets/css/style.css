@@ -156,6 +156,9 @@ p{ margin:0 0 1em; }
   flex-direction:column; align-items:center; justify-content:center; gap:5px;
 }
 .burger span{ width:18px; height:1.5px; background:var(--ink); transition:transform .3s var(--ease), opacity .2s; }
+
+/* Only ever shown at mobile widths — see the 820px breakpoint. */
+.nav-scrim{ display:none; }
 .burger[aria-expanded="true"] span:nth-child(1){ transform:translateY(6.5px) rotate(45deg); }
 .burger[aria-expanded="true"] span:nth-child(2){ opacity:0; }
 .burger[aria-expanded="true"] span:nth-child(3){ transform:translateY(-6.5px) rotate(-45deg); }
@@ -529,19 +532,40 @@ p{ margin:0 0 1em; }
 }
 
 @media (max-width:820px){
-  .burger{ display:flex; }
+  /* `backdrop-filter` makes .header the containing block for its fixed-position
+     descendants, which collapsed the drawer to the header's own 78px box — the
+     links then spilled out of it with no background behind them. The blur is a
+     desktop nicety, so it goes here and .nav resolves against the viewport. */
+  .header{ backdrop-filter:none; background:var(--cream); }
+
+  /* Above the drawer, so the X actually closes it rather than being covered. */
+  .burger{ display:flex; position:relative; z-index:70; background:var(--cream); }
+
   .nav{
     position:fixed; inset:0 0 0 auto; width:min(84vw,340px);
-    background:var(--cream); border-left:1px solid var(--line);
+    background:var(--white); border-left:1px solid var(--line);
     flex-direction:column; align-items:flex-start; justify-content:center;
-    gap:1.6rem; padding:2rem 2.2rem;
-    transform:translateX(100%); transition:transform .4s var(--ease);
+    gap:1.6rem; padding:5.5rem 2.2rem 2rem;   /* clears the header row */
+    transform:translateX(100%);
+    transition:transform .4s var(--ease), visibility .4s var(--ease);
     box-shadow:var(--shadow-lg); z-index:65;
+    overflow-y:auto;
+    visibility:hidden;                        /* keeps links out of the tab order */
   }
-  .nav.is-open{ transform:none; }
+  .nav.is-open{ transform:none; visibility:visible; }
   .nav__link{ font-size:1.3rem; font-family:var(--serif); }
   .nav__cta{ margin-left:0; margin-top:.6rem; }
   body.nav-open{ overflow:hidden; }
+
+  /* Tap-anywhere-to-close, and the dimming that makes the panel read as a panel.
+     Sits below the header (z-60) so the burger stays reachable. */
+  .nav-scrim{
+    display:block; position:fixed; inset:0; z-index:55;
+    background:rgba(27,23,51,.55);
+    opacity:0; pointer-events:none;
+    transition:opacity .4s var(--ease);
+  }
+  .nav-scrim.is-shown{ opacity:1; pointer-events:auto; }
 }
 
 @media (max-width:860px){
