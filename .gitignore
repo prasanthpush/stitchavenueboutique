@@ -1,8 +1,20 @@
-# Real credentials — never commit. Use config/mail.example.php as the template.
+# Real credentials — never commit.
+# Netlify: set these as environment variables in the site UI instead.
+.env
+.env.*
+!.env.example
+
+# PHP backend config (XAMPP only) — holds the Gmail App Password
 /config/mail.php
 
-# Runtime state: rate-limit counters, used tokens, logs
+# Runtime state: rate-limit counters, used tokens, logs (PHP backend)
 /storage/*
 !/storage/.htaccess
 
+node_modules/
+.netlify/
+
 .DS_Store
+
+# netlify dev artifact
+deno.lock

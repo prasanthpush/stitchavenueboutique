@@ -1,8 +1,16 @@
-# Booking form — setup
+# Booking form — the PHP backend (XAMPP)
 
-The form at `#appointment` posts to `api/book.php`, which sends the enquiry
-through **Gmail SMTP** and replies with JSON. Everything is already wired up.
-There is one thing left to do before it can send mail.
+> **This is not what the live site uses.** The live site runs on Netlify, which
+> cannot execute PHP — see [NETLIFY.md](NETLIFY.md) for the deployed backend.
+> This guide covers the PHP version, kept for local XAMPP work and as a
+> ready-made option if the site ever moves to PHP hosting.
+>
+> Note the form posts to `/api/book` (the Netlify Function) by default. To use
+> the PHP endpoint instead, point the form's `action` back at `api/book.php`
+> and the token fetch in `assets/js/main.js` back at `api/form-token.php`.
+
+The form sends the enquiry through **Gmail SMTP** and replies with JSON.
+Everything is wired up; there is one thing left to do before it can send mail.
 
 ---
 

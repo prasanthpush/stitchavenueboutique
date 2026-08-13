@@ -371,9 +371,9 @@
       </ul>
     </div>
 
-    <!-- Posts to api/book.php. Validation and anti-spam are enforced server-side;
-         everything here is a convenience copy of those same rules. -->
-    <form class="booking__form reveal" id="bookingForm" action="api/book.php" method="post" novalidate>
+    <!-- Posts to the /api/book Netlify Function. Validation and anti-spam are
+         enforced server-side; everything here is a convenience copy of them. -->
+    <form class="booking__form reveal" id="bookingForm" action="/api/book" method="post" novalidate>
 
       <!-- Decoys. Off-screen and skipped by keyboard and screen readers alike,
            so only an automated filler ever puts anything in them. -->

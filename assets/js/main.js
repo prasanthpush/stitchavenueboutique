@@ -98,7 +98,7 @@
   var tokenPending = null;
 
   function loadToken() {
-    tokenPending = fetch('api/form-token.php', {
+    tokenPending = fetch('/api/form-token', {
       method: 'GET',
       credentials: 'same-origin',
       headers: { 'Accept': 'application/json' }

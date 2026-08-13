@@ -1,0 +1,73 @@
+[build]
+  publish = "."
+  functions = "netlify/functions"
+
+[functions]
+  node_bundler = "esbuild"
+
+# The endpoints route themselves via `export const config = { path: … }` in
+# netlify/functions/*.mjs, so no redirects are needed for them.
+
+# ---------------------------------------------------------------------------
+# The PHP backend cannot run on Netlify. It is kept in the repository for the
+# XAMPP setup, but must never be served here — a static host would hand out the
+# source as plain text.
+# ---------------------------------------------------------------------------
+[[redirects]]
+  from = "/app/*"
+  to = "/404.html"
+  status = 404
+  force = true
+
+# Netlify only globs a trailing segment, so "/api/*.php" never matches —
+# these two need naming outright.
+[[redirects]]
+  from = "/api/book.php"
+  to = "/404.html"
+  status = 404
+  force = true
+
+[[redirects]]
+  from = "/api/form-token.php"
+  to = "/404.html"
+  status = 404
+  force = true
+
+[[redirects]]
+  from = "/config/*"
+  to = "/404.html"
+  status = 404
+  force = true
+
+[[redirects]]
+  from = "/storage/*"
+  to = "/404.html"
+  status = 404
+  force = true
+
+[[redirects]]
+  from = "/vendor/*"
+  to = "/404.html"
+  status = 404
+  force = true
+
+# ---------------------------------------------------------------------------
+# Security headers
+# ---------------------------------------------------------------------------
+[[headers]]
+  for = "/*"
+  [headers.values]
+    X-Content-Type-Options = "nosniff"
+    X-Frame-Options = "SAMEORIGIN"
+    Referrer-Policy = "strict-origin-when-cross-origin"
+    Permissions-Policy = "geolocation=(), microphone=(), camera=()"
+
+[[headers]]
+  for = "/assets/*"
+  [headers.values]
+    Cache-Control = "public, max-age=604800"
+
+[[headers]]
+  for = "/index.html"
+  [headers.values]
+    Cache-Control = "public, max-age=0, must-revalidate"
