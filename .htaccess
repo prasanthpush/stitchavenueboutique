@@ -1,0 +1,65 @@
+# =========================================================
+# Stitch Avenue Boutique
+# =========================================================
+
+Options -Indexes
+DirectoryIndex index.html index.php
+
+# ---- Keep application internals off the web -------------
+# app/, config/, storage/ and vendor/ each carry their own deny rule as well;
+# this catches hosts where per-directory .htaccess is not read.
+RedirectMatch 404 ^/(?:.*/)?(?:app|config|storage|vendor)(?:/|$)
+
+<FilesMatch "(?i)^(composer\.(json|lock)|.*\.(md|log|ini|sql|bak|dist|example\.php))$">
+  <IfModule mod_authz_core.c>
+    Require all denied
+  </IfModule>
+  <IfModule !mod_authz_core.c>
+    Order allow,deny
+    Deny from all
+  </IfModule>
+</FilesMatch>
+
+# Dotfiles (.git, .env, .DS_Store …)
+<FilesMatch "^\.">
+  <IfModule mod_authz_core.c>
+    Require all denied
+  </IfModule>
+  <IfModule !mod_authz_core.c>
+    Order allow,deny
+    Deny from all
+  </IfModule>
+</FilesMatch>
+
+# ---- Security headers -----------------------------------
+<IfModule mod_headers.c>
+  Header always set X-Content-Type-Options "nosniff"
+  Header always set X-Frame-Options "SAMEORIGIN"
+  Header always set Referrer-Policy "strict-origin-when-cross-origin"
+  Header always set Permissions-Policy "geolocation=(), microphone=(), camera=(), interest-cohort=()"
+  # The form endpoints must never be cached by a proxy.
+  <FilesMatch "\.php$">
+    Header always set Cache-Control "no-store, no-cache, must-revalidate"
+  </FilesMatch>
+</IfModule>
+
+# Hide the PHP version banner
+<IfModule mod_headers.c>
+  Header always unset X-Powered-By
+</IfModule>
+
+# ---- Static caching -------------------------------------
+<IfModule mod_expires.c>
+  ExpiresActive On
+  ExpiresByType text/css            "access plus 7 days"
+  ExpiresByType application/javascript "access plus 7 days"
+  ExpiresByType image/webp          "access plus 30 days"
+  ExpiresByType image/jpeg          "access plus 30 days"
+  ExpiresByType image/png           "access plus 30 days"
+  ExpiresByType image/svg+xml       "access plus 30 days"
+  ExpiresByType text/html           "access plus 0 seconds"
+</IfModule>
+
+<IfModule mod_deflate.c>
+  AddOutputFilterByType DEFLATE text/html text/css text/plain application/javascript application/json image/svg+xml
+</IfModule>

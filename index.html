@@ -279,27 +279,44 @@
 
 <!-- ============ Founder ============ -->
 <section class="section founder" id="about">
-  <div class="container founder__inner">
-    <div class="founder__photo reveal">
-      <img class="founder__img" src="assets/images/web/founder.webp" width="760" height="1645" loading="lazy"
-           alt="The founder of Stitch Avenue Boutique in a red and green silk saree">
+  <div class="container">
+    <div class="founder__inner">
+      <div class="founder__head reveal">
+        <span class="eyebrow">Meet the founder</span>
+        <h2>The hands behind Stitch Avenue</h2>
+        <blockquote class="founder__quote">
+          The person you sit with at the consultation is the person who stitches your outfit.
+        </blockquote>
+      </div>
+
+      <div class="founder__copy reveal">
+        <p>Stitch Avenue Boutique is run personally by its founder. She meets every customer, takes
+          the measurements herself, drafts the pattern and checks the final fit before anything
+          leaves the studio.</p>
+        <p>Nothing is handed down a line of anonymous tailors and nothing is cut to a generic size
+          chart. That is the whole point of a small boutique &mdash; and it is why a first fitting
+          here takes a little longer than it does anywhere else.</p>
+        <a href="#appointment" class="btn"><i class="fa-solid fa-calendar-check" aria-hidden="true"></i> Book a Fitting</a>
+      </div>
     </div>
 
-    <div class="founder__copy reveal">
-      <span class="eyebrow">Meet the founder</span>
-      <h2>The hands behind Stitch Avenue</h2>
-      <p>Stitch Avenue Boutique is run personally by its founder. She meets every customer, takes
-        the measurements herself, drafts the pattern and checks the final fit before anything
-        leaves the studio.</p>
-      <p>That is the whole point of a small boutique &mdash; the person you sit with at the
-        consultation is the person who stitches your outfit.</p>
-      <ul class="ticks">
-        <li>Every measurement taken in person</li>
-        <li>A pattern drafted for you, not a size chart</li>
-        <li>Final fit checked before it is packed</li>
-      </ul>
-      <a href="#appointment" class="btn"><i class="fa-solid fa-calendar-check" aria-hidden="true"></i> Book a Fitting</a>
-    </div>
+    <ul class="founder__points">
+      <li class="founder__point reveal">
+        <i class="fa-solid fa-ruler" aria-hidden="true"></i>
+        <strong>Measured in person</strong>
+        <span>Every measurement taken by hand and kept on your file for next time.</span>
+      </li>
+      <li class="founder__point reveal">
+        <i class="fa-solid fa-pen-ruler" aria-hidden="true"></i>
+        <strong>Drafted for you</strong>
+        <span>A pattern cut to your body, never adapted from a standard size chart.</span>
+      </li>
+      <li class="founder__point reveal">
+        <i class="fa-solid fa-circle-check" aria-hidden="true"></i>
+        <strong>Checked before packing</strong>
+        <span>The final fit is inspected by the same hands that stitched it.</span>
+      </li>
+    </ul>
   </div>
 </section>
 
@@ -354,37 +371,71 @@
       </ul>
     </div>
 
-    <!-- Front-end only. Point action="book.php" once you add the PHP handler. -->
-    <form class="booking__form reveal" id="bookingForm" novalidate>
+    <!-- Posts to api/book.php. Validation and anti-spam are enforced server-side;
+         everything here is a convenience copy of those same rules. -->
+    <form class="booking__form reveal" id="bookingForm" action="api/book.php" method="post" novalidate>
+
+      <!-- Decoys. Off-screen and skipped by keyboard and screen readers alike,
+           so only an automated filler ever puts anything in them. -->
+      <div class="hp" aria-hidden="true">
+        <label for="website">Website</label>
+        <input type="text" id="website" name="website" tabindex="-1" autocomplete="off">
+        <label for="company">Company</label>
+        <input type="text" id="company" name="company" tabindex="-1" autocomplete="off">
+      </div>
+      <input type="hidden" name="form_token" id="formToken" value="">
+
       <div class="field">
         <label for="name">Your name</label>
-        <input type="text" id="name" name="name" placeholder="e.g. Meera Nair" required>
+        <input type="text" id="name" name="name" placeholder="e.g. Meera Nair"
+               autocomplete="name" maxlength="60" required>
+        <p class="field__error" id="err-name"></p>
       </div>
+
       <div class="field-row">
         <div class="field">
           <label for="phone">Phone</label>
-          <input type="tel" id="phone" name="phone" placeholder="10-digit number" required>
+          <input type="tel" id="phone" name="phone" placeholder="10-digit mobile number"
+                 autocomplete="tel" inputmode="numeric" maxlength="18" required>
+          <p class="field__error" id="err-phone"></p>
         </div>
         <div class="field">
           <label for="date">Preferred date</label>
           <input type="date" id="date" name="date">
+          <p class="field__error" id="err-date"></p>
         </div>
       </div>
+
+      <div class="field">
+        <label for="email">Email <span class="field__hint">we&rsquo;ll send your confirmation here</span></label>
+        <input type="email" id="email" name="email" placeholder="you@example.com"
+               autocomplete="email" maxlength="100" required>
+        <p class="field__error" id="err-email"></p>
+      </div>
+
       <div class="field">
         <label for="service">Service</label>
-        <select id="service" name="service">
-          <option>Custom stitching</option>
-          <option>Boutique wear</option>
-          <option>Bridal / occasion wear</option>
-          <option>Something else</option>
+        <select id="service" name="service" required>
+          <option value="custom-stitching">Custom stitching</option>
+          <option value="boutique-wear">Boutique wear</option>
+          <option value="bridal-occasion">Bridal / occasion wear</option>
+          <option value="other">Something else</option>
         </select>
+        <p class="field__error" id="err-service"></p>
       </div>
+
       <div class="field">
         <label for="notes">Anything we should know</label>
-        <textarea id="notes" name="notes" rows="3" placeholder="Occasion, fabric, deadline…"></textarea>
+        <textarea id="notes" name="notes" rows="3" maxlength="700"
+                  placeholder="Occasion, fabric, deadline…"></textarea>
+        <p class="field__error" id="err-notes"></p>
       </div>
-      <button type="submit" class="btn btn--full">Request Appointment</button>
-      <p class="form__note" id="formNote" role="status"></p>
+
+      <button type="submit" class="btn btn--full" id="bookingSubmit">
+        <span class="btn__label">Request Appointment</span>
+      </button>
+      <p class="form__note" id="formNote" role="status" aria-live="polite"></p>
+      <p class="form__legal">We use your details only to answer this enquiry. No newsletters, no sharing.</p>
     </form>
   </div>
 </section>

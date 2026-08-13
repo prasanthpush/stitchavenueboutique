@@ -1,0 +1,8 @@
+# Real credentials — never commit. Use config/mail.example.php as the template.
+/config/mail.php
+
+# Runtime state: rate-limit counters, used tokens, logs
+/storage/*
+!/storage/.htaccess
+
+.DS_Store
