@@ -25,6 +25,8 @@ configuration → Environment variables**. Nothing here belongs in the repo.
 | `SMTP_PASS` | yes | Its 16-character Google App Password |
 | `FORM_SECRET` | yes | Random 64-character hex — signs the form tokens |
 | `MAIL_TO` | yes | Where enquiries land. Comma-separated for several people |
+| `MAIL_CC` | no | Copied on the enquiry, visible to all recipients |
+| `MAIL_BCC` | no | Copied on the enquiry, hidden from other recipients |
 | `ALLOWED_HOSTS` | yes | Your hostnames, comma-separated |
 | `MAIL_FROM_NAME` | no | Display name on outgoing mail |
 | `SPAM_THRESHOLD` | no | Score at which a message is refused (default `3`) |
@@ -38,6 +40,24 @@ Generate the secret:
 ```
 node -e "console.log(require('crypto').randomBytes(32).toString('hex'))"
 ```
+
+### Recipients
+
+`MAIL_TO`, `MAIL_CC` and `MAIL_BCC` all take comma-separated addresses:
+
+```
+MAIL_TO=owner@gmail.com,shop@gmail.com
+MAIL_CC=manager@gmail.com
+MAIL_BCC=archive@gmail.com
+```
+
+They apply to the **enquiry notification only**. The customer's acknowledgement
+is never copied to anyone — a CC would hand your colleague's address to the
+customer, and a BCC would send their enquiry to someone they never agreed to.
+
+An address that is not a valid e-mail is dropped and logged rather than allowed
+to fail the whole send, so one typo in `MAIL_CC` cannot cost you an enquiry.
+Check the function log for `[config]` lines if a recipient is not receiving.
 
 `ALLOWED_HOSTS` **must include the domain the site is actually served from**,
 including the `*.netlify.app` subdomain if you use it:

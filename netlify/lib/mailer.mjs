@@ -110,6 +110,13 @@ async function sendNotification(d, meta) {
     text: notificationText(rows, d.notes ?? '', meta),
   };
 
+  // Only the internal notification carries CC/BCC. The customer's
+  // acknowledgement deliberately does not — copying anyone on that would
+  // expose the address to the customer (CC) or leak their enquiry to a
+  // third party they never agreed to (BCC).
+  if (config.cc.length > 0) message.cc = config.cc;
+  if (config.bcc.length > 0) message.bcc = config.bcc;
+
   // Reply-To is the one place customer input reaches a header. The address is
   // validated by now; nodemailer refuses a malformed one, and a rejected
   // Reply-To must not cost the boutique the enquiry.

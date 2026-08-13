@@ -49,6 +49,9 @@ return [
         ['email' => 'stitchavenueboutique@gmail.com', 'name' => 'Stitch Avenue Boutique'],
     ],
 
+    // Copied on every enquiry notification. CC is visible to all
+    // recipients; BCC is not. Neither appears on the customer's auto-reply.
+    'cc'  => [],
     'bcc' => [],
 
     /* ---------------- Customer auto-reply ---------------- */

@@ -32,6 +32,22 @@ const list = (name, fallback = []) => {
   return raw.split(',').map((v) => v.trim()).filter(Boolean);
 };
 
+/**
+ * A recipient list, with unusable entries dropped rather than allowed to fail
+ * the send. One typo in MAIL_CC should not cost the boutique the enquiry, so
+ * the bad entry is logged and the message still goes to everyone else.
+ */
+const recipients = (name) => {
+  const all = list(name);
+  const good = all.filter((address) => /^[^\s@,]+@[^\s@,.]+(\.[^\s@,.]+)+$/.test(address));
+
+  const dropped = all.filter((address) => !good.includes(address));
+  if (dropped.length > 0) {
+    console.error(`[config] ${name} has unusable addresses, ignoring:`, dropped.join(', '));
+  }
+  return good;
+};
+
 export const config = {
   smtp: {
     host: str('SMTP_HOST', 'smtp.gmail.com'),
@@ -49,7 +65,11 @@ export const config = {
     name: str('MAIL_FROM_NAME', 'Stitch Avenue Website'),
   },
 
-  to: list('MAIL_TO'),
+  // Recipients of the enquiry notification. CC is visible to everyone on the
+  // message; BCC is not. All three are comma-separated.
+  to: recipients('MAIL_TO'),
+  cc: recipients('MAIL_CC'),
+  bcc: recipients('MAIL_BCC'),
 
   autoreply: {
     enabled: str('AUTOREPLY', 'on').toLowerCase() !== 'off',

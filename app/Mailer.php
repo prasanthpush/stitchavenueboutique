@@ -49,8 +49,22 @@ final class Mailer
         foreach ((array) config('to', []) as $recipient) {
             $mail->addAddress($recipient['email'], $recipient['name'] ?? '');
         }
-        foreach ((array) config('bcc', []) as $recipient) {
-            $mail->addBCC($recipient['email'], $recipient['name'] ?? '');
+
+        // Only the internal notification carries CC/BCC — see the note in the
+        // Netlify mailer for why the customer's acknowledgement must not.
+        // A bad address here is skipped rather than allowed to fail the send.
+        foreach (['cc' => 'addCC', 'bcc' => 'addBCC'] as $key => $method) {
+            foreach ((array) config($key, []) as $recipient) {
+                try {
+                    $mail->{$method}($recipient['email'], $recipient['name'] ?? '');
+                } catch (MailException $e) {
+                    app_log('errors', [
+                        'event'   => $key . '_rejected',
+                        'address' => $recipient['email'] ?? '(missing)',
+                        'error'   => $e->getMessage(),
+                    ]);
+                }
+            }
         }
 
         // Reply-To is the one place customer input reaches a header. The
